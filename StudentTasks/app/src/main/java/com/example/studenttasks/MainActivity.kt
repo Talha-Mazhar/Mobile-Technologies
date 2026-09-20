@@ -48,7 +48,7 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
 
     Column(modifier = Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
-        Text(text = "Student Tasks", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Student Tasks", style = MaterialTheme.typography.headlineLarge)
 
         Text("3 Tasks")
 
