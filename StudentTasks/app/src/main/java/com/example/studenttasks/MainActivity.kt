@@ -52,12 +52,14 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
 
         TaskRow(
             title = "Prepare Kotlin exercise",
-            isCompleted = false
+            isCompleted = false,
+            priority = Priority.MEDIUM,
         )
 
         TaskRow(
             title = "Install Android Studio",
-            isCompleted = true
+            isCompleted = true,
+            priority = Priority.LOW
         )
 
         Button(onClick = {}) {
@@ -70,10 +72,11 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun TaskRow(title: String, isCompleted: Boolean) {
+fun TaskRow(title: String, isCompleted: Boolean, priority: Priority) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = isCompleted, onCheckedChange = null)
-        Text(text=title, modifier = Modifier.padding(start = 8.dp))
+        Text(text="${title}  ${priority}", modifier = Modifier.padding(start = 8.dp))
+
     }
 
 }
