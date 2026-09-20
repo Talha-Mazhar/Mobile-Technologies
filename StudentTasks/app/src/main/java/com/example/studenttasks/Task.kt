@@ -17,5 +17,6 @@ fun priorityLabel(priority: Priority):String {
 data class Task (
     val id: Int,
     val title: String,
-    val isCompleted: String,
+    val isCompleted: Boolean = false,
+    val priority: Priority = Priority.MEDIUM,
 )
