@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun StudentTasksApp(modifier: Modifier = Modifier) {
-    Text("Student Tasks");
+    Text("My Student Tasks");
 }
 
 //@Composable
