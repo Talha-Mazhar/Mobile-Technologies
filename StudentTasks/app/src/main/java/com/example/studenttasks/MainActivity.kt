@@ -44,23 +44,34 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun StudentTasksApp(modifier: Modifier = Modifier) {
 
+
+
     Column(modifier = Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
         Text(text = "Student Tasks", style = MaterialTheme.typography.headlineMedium)
 
         Text("3 Tasks")
 
-        TaskRow(
-            title = "Prepare Kotlin exercise",
-            isCompleted = false,
-            priority = Priority.MEDIUM,
-        )
 
-        TaskRow(
-            title = "Install Android Studio",
-            isCompleted = true,
-            priority = Priority.LOW
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            TaskRow(
+                title = "Prepare Kotlin exercise",
+                isCompleted = false,
+                priority = Priority.HIGH
+            )
+
+            TaskRow(
+                title = "Read Android documentation",
+                isCompleted = false,
+                priority = Priority.MEDIUM
+            )
+
+            TaskRow(
+                title = "Run the app",
+                isCompleted = true,
+                priority = Priority.LOW
+            )
+        }
 
         Button(onClick = {}) {
             Text("Add Task")
