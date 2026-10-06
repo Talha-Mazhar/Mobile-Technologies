@@ -77,6 +77,10 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
         } }
 
         TaskList(sortedTasks)
+
+        val pendingTasks = sampleTasks.filter { task -> !task.isCompleted }
+
+        TaskList(pendingTasks)
         Text("${sampleTasks.size} tasks")
         val completedCount = sampleTasks.count { it.isCompleted }
         Text(
