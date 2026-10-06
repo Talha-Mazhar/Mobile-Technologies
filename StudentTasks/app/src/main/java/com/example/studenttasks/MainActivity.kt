@@ -124,6 +124,8 @@ fun AddTaskExample() {
         mutableStateOf("")
     }
 
+    var addAttempts by remember { mutableStateOf(0) }
+
     Column {
 
         Row(
@@ -160,15 +162,26 @@ fun AddTaskExample() {
 
         Text("You typed: $taskTitle")
 
-        Button(
-            onClick = {
 
-            },
-            enabled = taskTitle.isNotBlank()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Add Task")
-        }
 
+
+            Text("Tasks added: $addAttempts")
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = {
+                    addAttempts++
+                },
+                enabled = taskTitle.isNotBlank()
+            ) {
+                Text("Add Task")
+            }
+
+        }
     }
 
 }
