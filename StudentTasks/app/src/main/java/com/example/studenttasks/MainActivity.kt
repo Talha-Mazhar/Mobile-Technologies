@@ -79,6 +79,7 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
 }
 @Composable
 fun TaskRow(task: Task) {
+
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = task.isCompleted, onCheckedChange = null)
         Column(
@@ -98,6 +99,12 @@ fun TaskRow(task: Task) {
 fun TaskList(
     tasks: List<Task>
 ) {
+
+    if(tasks.isEmpty()){
+        println("No tasks yet.")
+        return
+    }
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
