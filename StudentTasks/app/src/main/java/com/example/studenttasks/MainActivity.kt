@@ -80,7 +80,7 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
 
 
         AddTaskExample()
-        CounterExample()
+
 
     }
 
@@ -117,6 +117,9 @@ fun CounterExample() {
 
 @Composable
 fun AddTaskExample() {
+
+    CounterExample()
+
     var taskTitle by rememberSaveable {
         mutableStateOf("")
     }
@@ -150,10 +153,21 @@ fun AddTaskExample() {
             ) {
                 Text("Clear")
             }
+
+
+
         }
 
-
         Text("You typed: $taskTitle")
+
+        Button(
+            onClick = {
+
+            },
+            enabled = taskTitle.isNotBlank()
+        ) {
+            Text("Add Task")
+        }
 
     }
 
