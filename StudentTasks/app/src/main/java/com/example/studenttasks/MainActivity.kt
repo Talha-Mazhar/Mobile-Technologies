@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -36,63 +39,74 @@ class MainActivity : ComponentActivity() {
         setContent {
             StudentTasksTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Greeting(
-//                        name = "Android",
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
                     StudentTasksApp(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
-
-//Composable mean this has something to show
-
 @Composable
 fun StudentTasksApp(modifier: Modifier = Modifier) {
-
-
+    val sampleTasks = listOf(
+        Task(
+            id = 1,
+            title = "Prepare Kotlin exercise",
+            priority = Priority.HIGH
+        ),
+        Task(
+            id = 2,
+            title = "Read Android documentation",
+            priority = Priority.MEDIUM
+        ),
+        Task(
+            id = 3,
+            title = "Run the app",
+            isCompleted = true,
+            priority = Priority.LOW
+        )
+    )
 
     Column(modifier = Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-
         Text(text = "Student Tasks", style = MaterialTheme.typography.headlineLarge)
-
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            TaskRow(
-                title = "Prepare Kotlin exercise",
-                isCompleted = false,
-                priority = Priority.HIGH
-            )
-
-            TaskRow(
-                title = "Read Android documentation",
-                isCompleted = false,
-                priority = Priority.MEDIUM
-            )
-
-            TaskRow(
-                title = "Run the app",
-                isCompleted = true,
-                priority = Priority.LOW
+        TaskList(sampleTasks)
+        Text("${sampleTasks.size} tasks")
+        val completedCount = sampleTasks.count { it.isCompleted }
+        Text(
+            "$completedCount of ${sampleTasks.size} completed"
+        )
+        AddTaskExample()
+    }
+}
+@Composable
+fun TaskRow(task: Task) {
+    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(checked = task.isCompleted, onCheckedChange = null)
+        Column(
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .weight(1f)
+        ) {
+            Text(task.title)
+            Text(
+                text = task.priority.name,
+                style = MaterialTheme.typography.bodySmall
             )
         }
-
-
-        AddTaskExample()
-
-
     }
-
 }
-
-
-
 @Composable
-fun TaskRow(title: String, isCompleted: Boolean, priority: Priority) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(checked = isCompleted, onCheckedChange = null)
-        Text(text="${title}  ${priority}", modifier = Modifier.padding(start = 8.dp))
+fun TaskList(
+    tasks: List<Task>
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(
+            items = tasks,
+            key = { task -> task.id }
+        ) { task ->
+            TaskRow(task)
+        }
     }
 }
 
@@ -117,23 +131,17 @@ fun CounterExample() {
 
 @Composable
 fun AddTaskExample() {
-
     CounterExample()
-
     var taskTitle by rememberSaveable {
         mutableStateOf("")
     }
-
     var addAttempts by remember { mutableStateOf(0) }
-
     Column {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
             modifier = Modifier.fillMaxWidth()
         ) {
-
             OutlinedTextField(
                 value = taskTitle,
                 onValueChange = { newValue ->
@@ -143,11 +151,8 @@ fun AddTaskExample() {
                     Text("Task title")
                 },
                 modifier = Modifier.weight(1f)
-
             )
-
             Spacer(modifier = Modifier.width(8.dp))
-
             Button(
                 onClick = {
                     taskTitle = ""
@@ -155,21 +160,13 @@ fun AddTaskExample() {
             ) {
                 Text("Clear")
             }
-
-
-
         }
-
         Text("You typed: $taskTitle")
-
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
             modifier = Modifier.fillMaxWidth()
         ) {
-
-
             Text("Tasks added: $addAttempts")
             Spacer(modifier = Modifier.width(8.dp))
             Button(
@@ -180,10 +177,8 @@ fun AddTaskExample() {
             ) {
                 Text("Add Task")
             }
-
         }
     }
-
 }
 
 
