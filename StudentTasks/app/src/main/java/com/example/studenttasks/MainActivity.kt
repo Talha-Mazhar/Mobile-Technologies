@@ -7,15 +7,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -50,9 +58,6 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
 
         Text(text = "Student Tasks", style = MaterialTheme.typography.headlineLarge)
 
-        Text("3 Tasks")
-
-
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             TaskRow(
                 title = "Prepare Kotlin exercise",
@@ -73,24 +78,90 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
             )
         }
 
-        Button(onClick = {}) {
-            Text("Add Task")
-        }
 
+        AddTaskExample()
+        CounterExample()
 
     }
 
 }
+
+
 
 @Composable
 fun TaskRow(title: String, isCompleted: Boolean, priority: Priority) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = isCompleted, onCheckedChange = null)
         Text(text="${title}  ${priority}", modifier = Modifier.padding(start = 8.dp))
+    }
+}
+
+
+@Composable
+fun CounterExample() {
+    var count by remember { mutableStateOf(0) }
+
+    Column {
+        Text("Tasks: $count")
+
+        Button(
+            onClick = {
+                count++
+            }
+        ) {
+            Text("Add")
+        }
+    }
+}
+
+
+@Composable
+fun AddTaskExample() {
+    var taskTitle by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    Column {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            OutlinedTextField(
+                value = taskTitle,
+                onValueChange = { newValue ->
+                    taskTitle = newValue
+                },
+                label = {
+                    Text("Task title")
+                },
+                modifier = Modifier.weight(1f)
+
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(
+                onClick = {
+                    taskTitle = ""
+                }
+            ) {
+                Text("Clear")
+            }
+        }
+
+
+        Text("You typed: $taskTitle")
 
     }
 
 }
+
+
+
+
 
 //@Composable
 //fun Greeting(name: String, modifier: Modifier = Modifier) {
