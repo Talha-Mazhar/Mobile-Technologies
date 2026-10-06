@@ -69,7 +69,14 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
 
     Column(modifier = Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(text = "Student Tasks", style = MaterialTheme.typography.headlineLarge)
-        TaskList(sampleTasks)
+
+        val sortedTasks = sampleTasks.sortedBy { task -> when (task.priority){
+            Priority.HIGH -> 0
+            Priority.MEDIUM -> 1
+            Priority.LOW -> 2
+        } }
+
+        TaskList(sortedTasks)
         Text("${sampleTasks.size} tasks")
         val completedCount = sampleTasks.count { it.isCompleted }
         Text(
@@ -109,6 +116,7 @@ fun TaskList(
         println("No tasks yet.")
         return
     }
+
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp)
