@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -137,10 +138,19 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
             Text("Add Task")
         }
 
-        Row(
+        val progressPercentage = if (tasks.isEmpty()) {
+0
+        } else {
+            completedCount * 100 / tasks.size
+        }
+
+         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ) {
+
+            Text("Progress: $progressPercentage%" )
+
             Button(
                 onClick = {
                     tasks = tasks.filter { task -> !task.isCompleted }
