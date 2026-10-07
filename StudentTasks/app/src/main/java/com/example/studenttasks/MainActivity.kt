@@ -117,6 +117,8 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
             )
         }
 
+        // rememeberSurvivable means it can survice Activity recreation
+
         composable("add") {
             AddTaskScreen(
                 onSave = { title ->
