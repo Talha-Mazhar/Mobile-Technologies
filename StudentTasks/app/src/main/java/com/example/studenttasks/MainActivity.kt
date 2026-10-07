@@ -1,6 +1,7 @@
 package com.example.studenttasks
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -105,6 +106,10 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
                     }
                 },
                 onDelete = { taskToDelete ->
+                    Log.d(
+                        "StudentTasks",
+                        "Deleting task ${taskToDelete.id}: ${taskToDelete.title}"
+                    )
                     tasks = tasks.filter {
                         it.id != taskToDelete.id
                     }
