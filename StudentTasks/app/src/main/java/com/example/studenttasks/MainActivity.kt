@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +13,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -30,6 +35,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.studenttasks.ui.theme.StudentTasksTheme
@@ -75,13 +81,25 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
         mutableStateOf("")
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    var selectedPriority by remember {
+        mutableStateOf(Priority.MEDIUM)
+    }
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         Text(text = "Student Tasks", style = MaterialTheme.typography.headlineLarge)
         val completedCount = tasks.count { it.isCompleted }
         Text(
             "$completedCount of ${tasks.size} completed"
         )
 
+
+        val duplicateTitle =
+            tasks.filter { task -> task.title.lowercase() == newTaskTitle.lowercase() }.size
 
         OutlinedTextField(
             value = newTaskTitle,
@@ -93,17 +111,28 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
             },
             modifier = Modifier.fillMaxWidth()
         )
+
+        SimplePriorityDropdown(
+            selectedOption = selectedPriority,
+            onOptionSelected = { newPriority ->
+                selectedPriority = newPriority
+            }
+        )
+
+
         Button(
             onClick = {
                 val newTask = Task(
                     id = (tasks.maxOfOrNull { it.id } ?: 0) + 1,
-                    title = newTaskTitle.trim()
+                    title = newTaskTitle.trim(),
+                    priority = selectedPriority
                 )
 
                 tasks = tasks + newTask
                 newTaskTitle = ""
+                selectedPriority = Priority.MEDIUM
             },
-            enabled = newTaskTitle.isNotBlank()
+            enabled = newTaskTitle.isNotBlank() && duplicateTitle == 0
         ) {
             Text("Add Task")
         }
@@ -146,6 +175,43 @@ fun StudentTasksApp(modifier: Modifier = Modifier) {
 
     }
 }
+
+@Composable
+fun SimplePriorityDropdown(
+    selectedOption: Priority,
+    onOptionSelected: (Priority) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+        Button(onClick = { expanded = true }) {
+            Text("Priority: $selectedOption")
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            Priority.entries.forEach { priority ->
+                val isSelected = priority == selectedOption
+
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = if (isSelected) "✓ ${priority.name}" else "   ${priority.name}",
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        )
+                    },
+                    onClick = {
+                        onOptionSelected(priority)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun TaskRow(
     task: Task,
