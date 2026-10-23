@@ -7,4 +7,5 @@
     <string name="make_call">Call</string>
     <string name="sms_permission_error">SMS permission denied</string>
     <string name="call_permission_error">Call permission denied</string>
+    <string name="empty_phone_error">Please enter a phone number</string>
 </resources>

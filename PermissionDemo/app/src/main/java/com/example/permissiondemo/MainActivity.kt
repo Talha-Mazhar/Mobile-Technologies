@@ -58,6 +58,12 @@ class MainActivity : ComponentActivity() {
         }
     }
     private fun requestSmsPermission(phoneNumber: String, messageText: String) {
+        // Validation: do not ask for the permission if the phone number is empty
+        if (phoneNumber.isBlank()) {
+            Toast.makeText(this, getString(R.string.empty_phone_error), Toast.LENGTH_SHORT).show()
+            return
+        }
+
         pendingPhone = phoneNumber
         pendingMessage = messageText
 
@@ -83,6 +89,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun requestCallPermission(phoneNumber: String) {
+        // Validation: do not ask for the permission if the phone number is empty
+        if (phoneNumber.isBlank()) {
+            Toast.makeText(this, getString(R.string.empty_phone_error), Toast.LENGTH_SHORT).show()
+            return
+        }
+
         pendingPhone = phoneNumber
 
         when {
