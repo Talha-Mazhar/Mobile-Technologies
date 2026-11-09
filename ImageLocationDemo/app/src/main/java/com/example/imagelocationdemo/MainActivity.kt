@@ -1,7 +1,9 @@
 package com.example.imagelocationdemo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -22,6 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.example.imagelocationdemo.ui.theme.ImageLocationDemoTheme
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +70,8 @@ fun PermissionCard() {
 
 @Composable
 fun ScreenWithCard() {
+    var hasPermission by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,19 +86,41 @@ fun ScreenWithCard() {
         Text(text = stringResource(R.string.app_name))
         PermissionCard()
 
-        LocationPermissionExample()
+        if (hasPermission) {
+            UserLocationMapScreen(permissionGranted = true)
+        } else {
+            LocationPermissionExample(
+                onPermissionResult = { granted -> hasPermission = granted }
+            )
+        }
     }
 }
 
 @Composable
-fun LocationPermissionExample() {
+fun LocationPermissionExample(
+    onPermissionResult: (Boolean) -> Unit
+) {
     val context = LocalContext.current
-    var hasPermission by remember { mutableStateOf(false) }
+
+    var hasPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    // Keep the parent in sync if the permission was already granted at startup
+    LaunchedEffect(hasPermission) {
+        onPermissionResult(hasPermission)
+    }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         hasPermission = granted
+        onPermissionResult(granted)
         if (granted) {
             Toast.makeText(
                 context,
@@ -121,12 +151,66 @@ fun LocationPermissionExample() {
 
                 if (isGranted) {
                     hasPermission = true
+                    onPermissionResult(true)
                 } else {
                     permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 }
             }
         ) {
             Text("Enable location")
+        }
+    }
+}
+
+// Only called after ACCESS_FINE_LOCATION has been granted
+@SuppressLint("MissingPermission")
+@Composable
+fun UserLocationMapScreen(
+    permissionGranted: Boolean
+) {
+    val context = LocalContext.current
+    val fusedLocationClient = remember {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
+
+    var userLocation by remember { mutableStateOf<LatLng?>(null) }
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(0.0, 0.0), 10f)
+    }
+
+    LaunchedEffect(permissionGranted) {
+        if (permissionGranted) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    val current = LatLng(it.latitude, it.longitude)
+                    userLocation = current
+                    cameraPositionState.position = CameraPosition.fromLatLngZoom(current, 15f)
+                }
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 12.dp)
+    ) {
+        Text(text = "Your current location")
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        GoogleMap(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(420.dp),
+            cameraPositionState = cameraPositionState
+        ) {
+            userLocation?.let { position ->
+                Marker(
+                    state = MarkerState(position = position),
+                    title = "You are here"
+                )
+            }
         }
     }
 }
