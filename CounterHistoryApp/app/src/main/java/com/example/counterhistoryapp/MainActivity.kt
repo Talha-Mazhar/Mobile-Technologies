@@ -33,18 +33,19 @@ fun CounterHistoryApp(
     viewModel: CounterViewModel = viewModel()
 ) {
     val count = viewModel.count
+    val history = viewModel.history
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Text(
                 text = count.toString(),
                 style = MaterialTheme.typography.displayLarge
@@ -67,6 +68,15 @@ fun CounterHistoryApp(
                 }
             }
 
+            Text(
+                text = "History",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 32.dp, bottom = 8.dp)
+            )
+
+            history.forEach { value ->
+                Text(text = value.toString())
+            }
         }
     }
 }
